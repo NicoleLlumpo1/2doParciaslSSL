@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SSL · Guía de estudio – 2do Parcial</title>
+  <link rel="stylesheet" href="estilosPaginaEstudioSegundoParcialSsl.css">
+</head>
+<body>
+
+<!-- ============ ENCABEZADO ============ -->
+<header class="encabezadoPrincipal">
+  <h1 class="tituloPrincipal">Sintaxis y Semántica de los Lenguajes · 2do Parcial</h1>
+  <p class="subtituloPrincipal">UTN FRBA · Guía de repaso con teoría, ejemplos, ejercicios resueltos y quiz</p>
+  <div class="barraProgresoContenedor">
+    <progress class="barraProgresoEstudio" id="barraProgresoEstudio" value="0" max="100"></progress>
+    <span class="textoProgresoEstudio" id="textoProgresoEstudio">0% repasado</span>
+  </div>
+</header>
+
+<!-- ============ NAVEGACIÓN ============ -->
+<nav class="menuNavegacionTemas">
+  <a class="enlaceNavegacionTema" href="#temaRegex">1. Regex</a>
+  <a class="enlaceNavegacionTema" href="#temaTp2">2. TP2 Sumadores</a>
+  <a class="enlaceNavegacionTema" href="#temaDeclaraciones">3. Declaraciones C</a>
+  <a class="enlaceNavegacionTema" href="#temaPrecedencia">4. Precedencia</a>
+  <a class="enlaceNavegacionTema" href="#temaGramaticas">5. Gramáticas y autómatas</a>
+  <a class="enlaceNavegacionTema" href="#temaParser">6. Parser y BNF</a>
+  <a class="enlaceNavegacionTema" href="#temaTp3">7. TP3 Calculadora</a>
+  <a class="enlaceNavegacionTema" href="#temaPracticaParcial">8. Parcial resuelto</a>
+  <a class="enlaceNavegacionTema" href="#temaEjerciciosExtra">9. Ejercicios extra</a>
+  <a class="enlaceNavegacionTema" href="#temaQuiz">10. Quiz</a>
+  <a class="enlaceNavegacionTema" href="#temaConsejos">11. Consejos</a>
+</nav>
+
+<main class="contenidoPrincipal">
+
+<div class="barraHerramientasRespuestas">
+  <button class="botonHerramienta" id="botonExpandirRespuestas">Mostrar todas las respuestas</button>
+  <button class="botonHerramienta" id="botonContraerRespuestas">Ocultar todas las respuestas</button>
+</div>
+
+<!-- ============ 1. EXPRESIONES REGULARES ============ -->
+<section class="seccionTema" id="temaRegex">
+  <h2 class="tituloSeccion">1. Expresiones Regulares</h2>
+  <p>Una <strong>ER</strong> describe un <em>lenguaje regular</em> (Chomsky tipo 3). Se arman con tres operaciones básicas sobre un alfabeto Σ:</p>
+  <ul class="listaConceptos">
+    <li><strong>Unión</strong> <code>a|b</code> → {a, b}.</li>
+    <li><strong>Concatenación</strong> <code>ab</code> → {ab}.</li>
+    <li><strong>Clausura de Kleene</strong> <code>a*</code> → {ε, a, aa, aaa, …} (cero o más). La <em>clausura positiva</em> <code>a+</code> = <code>aa*</code> (una o más).</li>
+  </ul>
+  <h3 class="subtituloSeccion">ER extendidas (ERX / Regex)</h3>
+  <p>Son azúcar sintáctico: no agregan poder expresivo (siguen siendo regulares), pero abrevian.</p>
+  <table class="tablaReferencia">
+    <thead><tr><th>Notación</th><th>Significado</th><th>Equivalente en ER pura</th></tr></thead>
+    <tbody>
+      <tr><td><code>a+</code></td><td>una o más</td><td><code>aa*</code></td></tr>
+      <tr><td><code>a?</code></td><td>opcional</td><td><code>(a|ε)</code></td></tr>
+      <tr><td><code>[a-z]</code></td><td>clase de caracteres</td><td><code>a|b|…|z</code></td></tr>
+      <tr><td><code>[^0-9]</code></td><td>complemento de clase</td><td>cualquier carácter salvo dígitos</td></tr>
+      <tr><td><code>.</code></td><td>cualquier carácter (menos \n)</td><td>unión de todo Σ</td></tr>
+      <tr><td><code>a{2,4}</code></td><td>repetición acotada</td><td><code>aa|aaa|aaaa</code></td></tr>
+    </tbody>
+  </table>
+  <div class="cajaEjemplo">
+    <h4 class="tituloCajaEjemplo">Ejemplos</h4>
+    <ul class="listaConceptos">
+      <li>Entero con signo opcional: <code>[+-]?[0-9]+</code></li>
+      <li>Binario par: <code>(0|1)*0</code></li>
+      <li>Cadenas con "ab" como subcadena: <code>(a|b)*ab(a|b)*</code></li>
+    </ul>
+  </div>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
+
+<!-- ============ 2. TP2 SUMADORES ============ -->
+<section class="seccionTema" id="temaTp2">
+  <h2 class="tituloSeccion">2. TP2 – Sumadores</h2>
+  <h3 class="subtituloSeccion">Árboles de expresión y lectura de flujo (K&amp;R 1.5.1)</h3>
+  <p>El idioma de copia de archivos: <code>while ((c = getchar()) != EOF) putchar(c);</code>. Los paréntesis internos son <strong>obligatorios</strong> porque <code>!=</code> tiene mayor precedencia que <code>=</code>.</p>
+  <pre class="bloqueCodigo"><code>c = getchar() != EOF          c = (getchar() != EOF)
+  =                             =
+ / \                           / \
+c   !=      ← igual árbol →   c   !=      (el ejercicio del TP: ¡ambas son iguales!)
+   /  \                          /  \
+getchar() EOF               getchar() EOF</code></pre>
+  <p class="notaImportante">Ojo: <code>c = getchar() != EOF</code> guarda <strong>0 o 1</strong> en c, no el carácter. Por eso el idioma correcto es <code>(c = getchar()) != EOF</code>, y <code>c</code> debe ser <code>int</code> (para distinguir EOF de un byte válido).</p>
+
+  <h3 class="subtituloSeccion">Los programas</h3>
+  <table class="tablaReferencia">
+    <thead><tr><th>Programa</th><th>Qué lee</th><th>Idea clave</th></tr></thead>
+    <tbody>
+      <tr><td>SumarBytes.c</td><td>secuencia de bytes</td><td><code>getchar()</code> y acumular el valor de cada byte.</td></tr>
+      <tr><td>SumarInts.c</td><td>secuencia de <code>int</code> binarios</td><td><code>fread(&amp;n, sizeof n, 1, stdin) == 1</code>.</td></tr>
+      <tr><td>SumarInt_Ns.c</td><td>enteros de ancho fijo (<code>int8_t</code>, <code>int16_t</code>…)</td><td>Igual que Ints pero con <code>stdint.h</code>; el ancho no depende de la plataforma.</td></tr>
+      <tr><td>Decimales 4.a</td><td>texto decimal</td><td><code>scanf("%d", &amp;n) == 1</code>.</td></tr>
+      <tr><td>Decimales 4.b</td><td>texto decimal</td><td>Tu <code>bool GetNextDecimal(FILE *s, int *p)</code> como máquina de estados.</td></tr>
+    </tbody>
+  </table>
+<pre class="bloqueCodigo"><code>int c; long suma = 0;
+while ((c = getchar()) != EOF)
+    suma += c;
+printf("%ld\n", suma);</code></pre>
+
+  <h3 class="subtituloSeccion">Lenguaje decimal-constant de C23</h3>
+  <ul class="listaConceptos">
+    <li><strong>ER</strong>: <code>[1-9]('?[0-9])*</code> (C23 permite separador <code>'</code>). Con signo opcional del TP: <code>[+-]?[1-9][0-9]*</code>.</li>
+    <li><strong>BNF</strong>: <code>&lt;decimal-constant&gt; ::= &lt;nonzero-digit&gt; | &lt;decimal-constant&gt; &lt;digit&gt;</code></li>
+    <li>Trampa: el <code>0</code> solo es una constante <em>octal</em>, no decimal.</li>
+    <li>AF: q0 –[1-9]→ q1 (final) –[0-9]→ q1; el resto va al estado sumidero/error.</li>
+  </ul>
+  <h3 class="subtituloSeccion">Implementaciones de máquinas de estado (sin tabla)</h3>
+  <ol class="listaConceptos">
+    <li><strong>enum + switch</strong>: estado = variable; transición = actualizar la variable.</li>
+    <li><strong>goto</strong>: estado = etiqueta; transición = salto. (Dijkstra: "Go To Considered Harmful"; hoy sigue usándose en C para manejo de errores y salida de bucles anidados.)</li>
+    <li><strong>Funciones recursivas</strong>: estado = función; transición = llamada.</li>
+  </ol>
+  <p><strong>Overflow:</strong> documentá qué hacés (detectar y avisar, saturar, usar tipo más ancho). Es pregunta clásica.</p>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
+
+<!-- ============ 3. DECLARACIONES C ============ -->
+<section class="seccionTema" id="temaDeclaraciones">
+  <h2 class="tituloSeccion">3. Lenguaje C: identificadores y declaraciones (K&amp;R A8)</h2>
+  <ul class="listaConceptos">
+    <li><strong>Identificador</strong>: letras, dígitos y <code>_</code>; no empieza con dígito; distingue mayúsculas; no puede ser palabra reservada.</li>
+    <li><strong>Declaración</strong> = <em>especificadores</em> + lista de <em>declaradores</em> con inicializador opcional.</li>
+    <li>Especificadores: clase de almacenamiento (<code>auto, register, static, extern, typedef</code>), tipo (<code>int, char, struct…</code>) y calificadores (<code>const, volatile</code>).</li>
+    <li>Declaradores: <code>*</code> (puntero), <code>[]</code> (arreglo), <code>()</code> (función).</li>
+  </ul>
+  <pre class="bloqueCodigo"><code>int *p[10];     /* arreglo de 10 punteros a int */
+int (*q)[10];   /* puntero a arreglo de 10 int  */
+int (*f)(int);  /* puntero a función int→int    */
+char *(*g[3])(void); /* arreglo de 3 punteros a función que devuelven char* */</code></pre>
+  <p class="notaImportante">Para leer: empezá por el identificador y andá a la derecha (<code>[]</code>, <code>()</code>) antes que a la izquierda (<code>*</code>), respetando los paréntesis.</p>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
+
+<!-- ============ 4. PRECEDENCIA ============ -->
+<section class="seccionTema" id="temaPrecedencia">
+  <h2 class="tituloSeccion">4. Precedencia, asociatividad y orden de evaluación</h2>
+  <table class="tablaReferencia">
+    <thead><tr><th>Operadores (de mayor a menor precedencia)</th><th>Asociatividad</th></tr></thead>
+    <tbody>
+      <tr><td><code>() [] -&gt; .</code></td><td>izq → der</td></tr>
+      <tr><td><code>! ~ ++ -- + - * &amp; (tipo) sizeof</code> (unarios)</td><td>der → izq</td></tr>
+      <tr><td><code>* / %</code></td><td>izq → der</td></tr>
+      <tr><td><code>+ -</code></td><td>izq → der</td></tr>
+      <tr><td><code>&lt;&lt; &gt;&gt;</code></td><td>izq → der</td></tr>
+      <tr><td><code>&lt; &lt;= &gt; &gt;=</code></td><td>izq → der</td></tr>
+      <tr><td><code>== !=</code></td><td>izq → der</td></tr>
+      <tr><td><code>&amp;</code> luego <code>^</code> luego <code>|</code></td><td>izq → der</td></tr>
+      <tr><td><code>&amp;&amp;</code> luego <code>||</code></td><td>izq → der</td></tr>
+      <tr><td><code>?:</code></td><td>der → izq</td></tr>
+      <tr><td><code>= += -= *= …</code></td><td>der → izq</td></tr>
+      <tr><td><code>,</code></td><td>izq → der</td></tr>
+    </tbody>
+  </table>
+  <div class="cajaEjemplo">
+    <h4 class="tituloCajaEjemplo">Distinguí los tres conceptos</h4>
+    <ul class="listaConceptos">
+      <li><strong>Precedencia</strong>: qué operador se agrupa primero (<code>a+b*c</code> → <code>a+(b*c)</code>).</li>
+      <li><strong>Asociatividad</strong>: cómo se agrupan operadores de igual precedencia (<code>a-b-c</code> → <code>(a-b)-c</code>).</li>
+      <li><strong>Orden de evaluación</strong>: en qué orden se evalúan los <em>operandos</em>. C <strong>no lo especifica</strong> para casi todos los operadores (solo <code>&amp;&amp; || ?: ,</code> lo garantizan). En <code>f()+g()</code> no sabés cuál se llama primero.</li>
+    </ul>
+  </div>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
+
+<!-- ============ 5. GRAMÁTICAS Y AUTÓMATAS ============ -->
+<section class="seccionTema" id="temaGramaticas">
+  <h2 class="tituloSeccion">5. Gramáticas, Jerarquía de Chomsky y Autómatas</h2>
+  <p>Gramática formal <strong>G = (N, T, P, S)</strong>: no terminales, terminales, producciones y axioma.</p>
+  <table class="tablaReferencia">
+    <thead><tr><th>Tipo</th><th>Gramática</th><th>Forma de producción</th><th>Reconocedor</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>Sin restricciones</td><td>α → β</td><td>Máquina de Turing</td></tr>
+      <tr><td>1</td><td>Sensible al contexto</td><td>αAβ → αγβ</td><td>Autómata linealmente acotado</td></tr>
+      <tr><td>2</td><td>Libre de contexto</td><td>A → γ</td><td><strong>Autómata con Pila (AFP)</strong></td></tr>
+      <tr><td>3</td><td>Regular</td><td>A → aB | a</td><td><strong>Autómata Finito (AF)</strong></td></tr>
+    </tbody>
+  </table>
+  <h3 class="subtituloSeccion">AFD</h3>
+  <p><strong>M = (Q, Σ, δ, q0, F)</strong> con <code>δ: Q × Σ → Q</code> (función total, un solo camino por cadena). Acepta si termina en un estado de F.</p>
+  <h3 class="subtituloSeccion">AFP</h3>
+  <p><strong>M = (Q, Σ, Γ, δ, q0, Z0, F)</strong>: agrega una pila (alfabeto Γ, símbolo inicial Z0). Cada transición mira estado, símbolo de entrada y tope de pila, y puede apilar/desapilar.</p>
+  <div class="cajaEjemplo">
+    <h4 class="tituloCajaEjemplo">Por qué hace falta la pila: L = { aⁿbⁿ | n ≥ 1 }</h4>
+    <p>Un AF no puede "contar" ilimitadamente. El AFP apila una A por cada <code>a</code> y desapila una por cada <code>b</code>; acepta con la pila en Z0. Mismo motivo por el que los paréntesis balanceados y las expresiones anidadas necesitan gramáticas tipo 2.</p>
+  </div>
+  <p class="notaImportante">Relación clave: regex ⇔ gramática regular ⇔ AF (léxico / scanner). BNF ⇔ gramática libre de contexto ⇔ AFP (sintaxis / parser).</p>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
+
+<!-- ============ 6. PARSER Y BNF ============ -->
+<section class="seccionTema" id="temaParser">
+  <h2 class="tituloSeccion">6. Análisis sintáctico descendente recursivo, BNF y expresiones</h2>
+  <h3 class="subtituloSeccion">BNF y su historia</h3>
+  <ul class="listaConceptos">
+    <li><strong>BNF</strong> (Backus-Naur Form): notación para gramáticas libres de contexto, usada por primera vez para definir <strong>ALGOL 60</strong>. Formato: <code>&lt;no-terminal&gt; ::= alternativa | alternativa</code>.</li>
+    <li><strong>Pascal</strong> (Wirth) se definió con <em>diagramas sintácticos</em> y EBNF, que agrega <code>{ }</code> (repetición) y <code>[ ]</code> (opcional).</li>
+    <li>Identificadores: <code>&lt;identifier&gt; ::= &lt;nondigit&gt; | &lt;identifier&gt; &lt;nondigit&gt; | &lt;identifier&gt; &lt;digit&gt;</code>.</li>
+  </ul>
+  <h3 class="subtituloSeccion">Expresiones con precedencia y asociatividad en la gramática</h3>
+  <p>La precedencia se codifica por <strong>niveles</strong> (más abajo = más fuerte) y la asociatividad por el lado de la recursión.</p>
+  <pre class="bloqueCodigo"><code>&lt;expression&gt; ::= &lt;term&gt; | &lt;expression&gt; '+' &lt;term&gt;        /* + asocia a izquierda */
+&lt;term&gt;       ::= &lt;primary&gt; | &lt;term&gt; '*' &lt;primary&gt;
+&lt;primary&gt;    ::= IDENTIFICADOR | NUMERO | '(' &lt;expression&gt; ')'</code></pre>
+  <h3 class="subtituloSeccion">Parser descendente recursivo (PAS)</h3>
+  <ul class="listaConceptos">
+    <li><strong>Una función por cada no-terminal.</strong> El cuerpo sigue la producción.</li>
+    <li>Necesita <strong>un token de lookahead</strong> para elegir alternativa (gramática LL(1)).</li>
+    <li><strong>No tolera recursión a izquierda</strong> (loop infinito). Se elimina: <code>E → E+T | T</code> pasa a <code>E → T { + T }</code>.</li>
+  </ul>
+<pre class="bloqueCodigo"><code>void Expression(void){          /* E → T { '+' T } */
+    Term();
+    while (token == SUMA) { Match(SUMA); Term(); }
+}
+void Term(void){                /* T → P { '*' P } */
+    Primary();
+    while (token == PRODUCTO) { Match(PRODUCTO); Primary(); }
+}</code></pre>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
+
+<!-- ============ 7. TP3 CALCULADORA ============ -->
+<section class="seccionTema" id="temaTp3">
+  <h2 class="tituloSeccion">7. TP3 – Calculadora infija</h2>
+  <h3 class="subtituloSeccion">Nivel léxico y Scanner</h3>
+  <ul class="listaConceptos">
+    <li>Especificado con <strong>Regex tipo flex</strong>; implementado como AF con <code>getchar</code>/<code>ungetc</code>.</li>
+    <li>Tokens: <code>NUMERO</code>, <code>IDENTIFICADOR</code>, <code>'+'</code>, <code>'*'</code>, <code>FDT</code> (fin de texto), <code>ERROR_LEXICO</code>.</li>
+  </ul>
+  <pre class="bloqueCodigo"><code>/* Scanner.h – interfaz */
+typedef enum { FDT, NUMERO, IDENTIFICADOR, SUMA, PRODUCTO, ERROR_LEXICO } Token;
+Token GetNextToken(void);
+const char *GetLexema(void);</code></pre>
+  <h3 class="subtituloSeccion">Nivel sintáctico y Parser</h3>
+  <ul class="listaConceptos">
+    <li>BNF tipo Bison; axioma <code>translation-unit</code>.</li>
+    <li>Un <code>Parse&lt;NoTerminal&gt;</code> por cada no-terminal; el parser <strong>llama</strong> al scanner (<code>GetNextToken</code>) y a rutinas semánticas.</li>
+    <li>Scanner y parser separados lógicamente (<code>Scanner.c/h</code>, <code>Parser.c/h</code>, <code>main.c</code>).</li>
+  </ul>
+  <h3 class="subtituloSeccion">Nivel semántico y errores</h3>
+  <ul class="listaConceptos">
+    <li>Semántica especificada en <strong>lenguaje natural</strong>: el valor de una constante, el de una suma/producto, qué pasa con un identificador.</li>
+    <li>Errores: <em>léxico</em> (carácter inválido), <em>sintáctico</em> (token inesperado, ej. <code>42+</code>), <em>semántico</em> (reglas que la gramática no puede expresar).</li>
+    <li>Válidas: <code>A+2*3</code>, <code>2*A+3</code>, <code>A</code>, <code>2</code>. Inválidas: <code>+</code>, <code>42+</code>, <code>+A</code>.</li>
+  </ul>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
+
+<!-- ============ 8. PARCIAL PRÁCTICO RESUELTO ============ -->
+<section class="seccionTema" id="temaPracticaParcial">
+  <h2 class="tituloSeccion">8. Práctica de parcial resuelta</h2>
+  <p>Intentá resolver cada punto antes de abrir la respuesta.</p>
+
+  <h3 class="subtituloSeccion">Parte 1 – Identificadores de C</h3>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">a, b, c. Ejemplos, ERX y BNF</summary>
+    <p><strong>Ejemplos:</strong> <code>contador</code>, <code>_x1</code>, <code>MAX_SIZE</code>.</p>
+    <p><strong>ERX:</strong> <code>[A-Za-z_][A-Za-z0-9_]*</code></p>
+    <p><strong>BNF:</strong></p>
+    <pre class="bloqueCodigo"><code>&lt;identifier&gt; ::= &lt;nondigit&gt;
+               | &lt;identifier&gt; &lt;nondigit&gt;
+               | &lt;identifier&gt; &lt;digit&gt;
+&lt;nondigit&gt;   ::= _ | a | b | … | z | A | … | Z
+&lt;digit&gt;      ::= 0 | 1 | … | 9</code></pre>
+  </details>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">d. Definición formal del AF</summary>
+    <p>M = (Q, Σ, δ, q0, F) con:</p>
+    <ul class="listaConceptos">
+      <li>Q = {q0, q1, qE}; Σ = {a–z, A–Z, 0–9, _}; F = {q1}</li>
+      <li>δ(q0, letra o _) = q1 · δ(q0, dígito) = qE</li>
+      <li>δ(q1, letra, dígito o _) = q1 · δ(qE, cualquiera) = qE</li>
+    </ul>
+    <p>qE es el estado sumidero (no se sale). Si lo preferís parcial, omitís qE y la cadena se rechaza al faltar transición.</p>
+  </details>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">e. GetNextIdentificador (prototipo, invocación, implementación)</summary>
+    <pre class="bloqueCodigo"><code>/* i. prototipo */
+bool GetNextIdentificador(FILE *s, char *id, size_t max);
+
+/* ii. invocación */
+char buf[32];
+if (GetNextIdentificador(stdin, buf, sizeof buf))
+    printf("Identificador: %s\n", buf);
+
+/* iii. máquina de estados (enum + switch) */
+bool GetNextIdentificador(FILE *s, char *id, size_t max){
+    enum { Inicial, EnIdentificador } estado = Inicial;
+    int c; size_t n = 0;
+    while ((c = getc(s)) != EOF) {
+        switch (estado) {
+        case Inicial:
+            if (isspace(c)) break;
+            if (isalpha(c) || c == '_') { id[n++] = c; estado = EnIdentificador; }
+            else { ungetc(c, s); return false; }
+            break;
+        case EnIdentificador:
+            if ((isalnum(c) || c == '_') &amp;&amp; n &lt; max - 1) id[n++] = c;
+            else { ungetc(c, s); id[n] = '\0'; return true; }
+            break;
+        }
+    }
+    if (estado == EnIdentificador) { id[n] = '\0'; return true; }
+    return false;
+}</code></pre>
+  </details>
+
+  <h3 class="subtituloSeccion">Precedencia y asociatividad</h3>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">a, b. Ejemplo y árbol de expresión</summary>
+    <p>Expresión: <code>x = y = a + b * c</code></p>
+    <ul class="listaConceptos">
+      <li>Precedencia: <code>*</code> antes que <code>+</code>, y ambos antes que <code>=</code>.</li>
+      <li>Asociatividad: <code>=</code> asocia a derecha → <code>x = (y = (a + (b * c)))</code>.</li>
+    </ul>
+    <pre class="bloqueCodigo"><code>      =
+     / \
+    x   =
+       / \
+      y   +
+         / \
+        a   *
+           / \
+          b   c</code></pre>
+  </details>
+
+  <h3 class="subtituloSeccion">Parte 2 – Gramática (selection-statement)</h3>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">a. Formalizar la gramática</summary>
+    <p>G = (N, T, P, S) con:</p>
+    <ul class="listaConceptos">
+      <li>N = { &lt;selection-statement&gt;, &lt;expression&gt;, &lt;statement&gt; }</li>
+      <li>T = { "if", "(", ")", "else", … terminales de expression y statement }</li>
+      <li>S = &lt;selection-statement&gt;</li>
+      <li>P = las dos producciones del BNF dado (con if, y con if-else), más las de &lt;expression&gt; y &lt;statement&gt;, que incluye a &lt;selection-statement&gt;.</li>
+    </ul>
+  </details>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">b. Sentencia correcta y derivación</summary>
+    <p>Sentencia: <code>if (x) y;</code> (suponiendo &lt;expression&gt; → identificador y &lt;statement&gt; → expresión ";")</p>
+    <pre class="bloqueCodigo"><code>&lt;selection-statement&gt;
+⇒ "if" "(" &lt;expression&gt; ")" &lt;statement&gt;      (1ª producción)
+⇒ "if" "(" x ")" &lt;statement&gt;                  (expression → x)
+⇒ "if" "(" x ")" y ";"                       (statement → y ;)</code></pre>
+  </details>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">c. ¿Es ambigua?</summary>
+    <p><strong>Sí, es ambigua</strong> (problema del <em>dangling else</em>). La cadena <code>if (a) if (b) s1; else s2;</code> tiene dos árboles de derivación:</p>
+    <ul class="listaConceptos">
+      <li>El <code>else</code> pertenece al <code>if (b)</code> (el interno).</li>
+      <li>El <code>else</code> pertenece al <code>if (a)</code> (el externo).</li>
+    </ul>
+    <p>Una gramática es ambigua si existe una cadena con más de un árbol de derivación. C lo resuelve por regla semántica: el else se asocia con el if más cercano.</p>
+  </details>
+
+  <h3 class="subtituloSeccion">Semántica de <code>f()+g()+h()</code></h3>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">a, b, c. Operaciones, orden y restricciones</summary>
+    <p><strong>a. Operaciones: 5.</strong> Tres invocaciones de función (operador <code>()</code>) y dos adiciones. Por asociatividad izquierda: <code>(f()+g())+h()</code>.</p>
+    <p><strong>b. Orden:</strong> C <strong>no especifica</strong> el orden de evaluación de los operandos de <code>+</code>. Solo se garantiza que cada suma se realiza después de evaluar sus dos operandos: la primera suma necesita f() y g(); la segunda necesita esa suma y h(). Pero h() podría llamarse antes que f() o g().</p>
+    <p><strong>c. Restricciones semánticas (dos):</strong></p>
+    <ul class="listaConceptos">
+      <li>f, g y h deben estar <strong>declaradas</strong> y ser funciones (o punteros a función).</li>
+      <li>Cada función debe devolver un tipo <strong>aritmético</strong> (no <code>void</code>), para que <code>+</code> sea válido. Además, la cantidad y tipos de argumentos deben coincidir con el prototipo.</li>
+    </ul>
+  </details>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
+
+<!-- ============ 9. EJERCICIOS EXTRA ============ -->
+<section class="seccionTema" id="temaEjerciciosExtra">
+  <h2 class="tituloSeccion">9. Ejercicios extra: AFP y BNF</h2>
+  <p>Notación AFP: <code>δ(estado, entrada, tope) = (estado nuevo, qué se apila)</code>. Con <code>ε</code> = sin consumir entrada o sin apilar.</p>
+
+  <h3 class="subtituloSeccion">Autómatas con Pila</h3>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio 1. AFP para L = { aⁿbⁿ | n ≥ 1 }</summary>
+    <p>M = ({q0, q1, q2}, {a, b}, {A, Z}, δ, q0, Z, {q2})</p>
+    <pre class="bloqueCodigo"><code>δ(q0, a, Z) = (q0, AZ)    /* primera a: apila A */
+δ(q0, a, A) = (q0, AA)    /* más a: apila A */
+δ(q0, b, A) = (q1, ε)     /* primera b: desapila */
+δ(q1, b, A) = (q1, ε)     /* más b: desapila */
+δ(q1, ε, Z) = (q2, Z)     /* pila vacía (solo Z): acepta */</code></pre>
+    <p>Traza con <code>aabb</code>: Z → AZ → AAZ → AZ → Z → acepta.</p>
+  </details>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio 2. Paréntesis balanceados</summary>
+    <p>M = ({q0, q1}, {(, )}, {P, Z}, δ, q0, Z, {q1})</p>
+    <pre class="bloqueCodigo"><code>δ(q0, (, Z) = (q0, PZ)
+δ(q0, (, P) = (q0, PP)
+δ(q0, ), P) = (q0, ε)
+δ(q0, ε, Z) = (q1, Z)</code></pre>
+    <p>Si aparece <code>)</code> con Z en el tope: no hay transición y se rechaza. Si termina con P en la pila: tampoco acepta.</p>
+  </details>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio 3. Idea del AFP para L = { w c wᴿ | w ∈ {a,b}* }</summary>
+    <ul class="listaConceptos">
+      <li>Antes de la <code>c</code>: apilar cada símbolo leído.</li>
+      <li>Al leer <code>c</code>: pasar al estado de comparación sin tocar la pila.</li>
+      <li>Después de la <code>c</code>: cada símbolo leído debe coincidir con el tope y se desapila.</li>
+      <li>Acepta cuando queda solo Z. Es determinístico gracias a la marca <code>c</code>; sin ella (palíndromos puros) el AFP es no determinístico.</li>
+    </ul>
+  </details>
+
+  <h3 class="subtituloSeccion">BNF y derivaciones</h3>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio 4. BNF de expresiones con + - * / y paréntesis (asociativos a izquierda)</summary>
+    <pre class="bloqueCodigo"><code>&lt;expression&gt; ::= &lt;term&gt;
+               | &lt;expression&gt; '+' &lt;term&gt;
+               | &lt;expression&gt; '-' &lt;term&gt;
+&lt;term&gt;       ::= &lt;factor&gt;
+               | &lt;term&gt; '*' &lt;factor&gt;
+               | &lt;term&gt; '/' &lt;factor&gt;
+&lt;factor&gt;     ::= IDENTIFICADOR | NUMERO | '(' &lt;expression&gt; ')'</code></pre>
+    <p>Dos niveles (expression/term) = dos precedencias. Recursión a izquierda = asociatividad a izquierda.</p>
+  </details>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio 5. Derivación más a la izquierda de A+2*3</summary>
+    <pre class="bloqueCodigo"><code>&lt;expression&gt; ⇒ &lt;expression&gt; + &lt;term&gt;
+             ⇒ &lt;term&gt; + &lt;term&gt;
+             ⇒ &lt;factor&gt; + &lt;term&gt;
+             ⇒ A + &lt;term&gt;
+             ⇒ A + &lt;term&gt; * &lt;factor&gt;
+             ⇒ A + &lt;factor&gt; * &lt;factor&gt;
+             ⇒ A + 2 * &lt;factor&gt;
+             ⇒ A + 2 * 3</code></pre>
+    <p>El árbol resultante agrupa <code>2*3</code> bajo el <code>+</code>: la gramática ya impone la precedencia.</p>
+  </details>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio 6. Lista de identificadores separados por coma</summary>
+    <pre class="bloqueCodigo"><code>&lt;identifier-list&gt; ::= &lt;identifier&gt;
+                     | &lt;identifier-list&gt; ',' &lt;identifier&gt;</code></pre>
+    <p>En EBNF: <code>identifier { ',' identifier }</code>. En regex (a nivel léxico): <code>ID(,ID)*</code>.</p>
+  </details>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio 7. Eliminar la recursión a izquierda para un parser descendente</summary>
+    <p>Regla: <code>A → Aα | β</code> se transforma en <code>A → βA'</code> y <code>A' → αA' | ε</code>.</p>
+    <pre class="bloqueCodigo"><code>E  → T E'
+E' → '+' T E' | ε
+T  → F T'
+T' → '*' F T' | ε
+F  → IDENTIFICADOR | NUMERO | '(' E ')'</code></pre>
+    <p>Atención: al implementar E' como bucle, mantené la asociatividad a izquierda al evaluar (acumulá el resultado).</p>
+  </details>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio 8. Eliminar la ambigüedad del dangling else</summary>
+    <pre class="bloqueCodigo"><code>&lt;statement&gt;  ::= &lt;matched&gt; | &lt;unmatched&gt;
+&lt;matched&gt;    ::= "if" "(" &lt;expression&gt; ")" &lt;matched&gt; "else" &lt;matched&gt;
+                | &lt;other-statement&gt;
+&lt;unmatched&gt;  ::= "if" "(" &lt;expression&gt; ")" &lt;statement&gt;
+                | "if" "(" &lt;expression&gt; ")" &lt;matched&gt; "else" &lt;unmatched&gt;</code></pre>
+    <p>Entre un if y su else solo puede haber sentencias "matched": el else queda ligado al if más cercano.</p>
+  </details>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
+
+<!-- ============ 10. QUIZ ============ -->
+<section class="seccionTema" id="temaQuiz">
+  <h2 class="tituloSeccion">10. Quiz de autoevaluación</h2>
+  <div class="contenedorQuiz" id="contenedorQuiz"></div>
+  <p class="resultadoQuiz" id="resultadoQuiz"></p>
+  <button class="botonHerramienta" id="botonReiniciarQuiz">Reiniciar quiz</button>
+</section>
+
+<!-- ============ 11. CONSEJOS Y BIBLIOGRAFÍA ============ -->
+<section class="seccionTema" id="temaConsejos">
+  <h2 class="tituloSeccion">11. Consejos y bibliografía</h2>
+  <ul class="listaConceptos">
+    <li><strong>Practicá escribiendo a mano</strong>: definiciones formales (n-uplas), BNF, árboles y código de máquinas de estado. El parcial es práctico.</li>
+    <li><strong>Memorizá las n-uplas</strong> de AF, AFP y gramática, con el significado de cada componente.</li>
+    <li>Cuando te pidan "justificar", escribí la derivación o un contraejemplo concreto.</li>
+    <li>Repasá tus propios TP2 y TP3: suelen tomar variantes de lo que implementaste.</li>
+    <li>No confundas léxico (regex/AF/scanner) con sintaxis (BNF/AFP/parser) ni con semántica (significado y restricciones).</li>
+    <li>En C: <code>int c</code> para <code>getchar</code>, <code>ungetc</code> para devolver el lookahead, y <code>isalpha/isdigit</code> con <code>ctype.h</code>.</li>
+  </ul>
+  <table class="tablaReferencia">
+    <thead><tr><th>Libro</th><th>Para qué usarlo</th></tr></thead>
+    <tbody>
+      <tr><td>El Lenguaje de Programación C, 2da ed. (K&amp;R)</td><td>Cap. 1.5 (flujos), 2 y A8 (declaraciones), A7 (expresiones y precedencia), 4.10 (recursión).</td></tr>
+      <tr><td>El Proceso de Compilación</td><td>Fases del compilador: scanner, parser, semántica.</td></tr>
+      <tr><td>SSL Muchnik (V1, V2, V3)</td><td>V1: gramáticas y Chomsky · V2: sintaxis y BNF · V3: autómatas y máquinas de estado (cap. 1).</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+
+<!-- ============ PIE DE PÁGINA ============ -->
+<footer class="piePagina">
+  <p>¡Éxito en el parcial! Repasá cada sección y marcá "Tema repasado" para seguir tu avance.</p>
+</footer>
+
+<script src="logicaPaginaEstudioSegundoParcialSsl.js"></script>
+</body>
+</html>
