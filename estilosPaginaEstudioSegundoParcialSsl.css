@@ -67,17 +67,11 @@ body {
 .enlaceNavegacionTema:hover { outline: 2px solid var(--colorAcento); }
 
 /* ============ CONTENIDO Y SECCIONES ============ */
-.contenidoPrincipal { 
-  max-width: 900px; 
-  margin: 0 auto; 
-  padding: 1rem; 
-}
+.contenidoPrincipal { max-width: 900px; margin: 0 auto; padding: 1rem; }
 .seccionTema {
-  margin: 1.25rem 0; 
-  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0; padding: 1.25rem 1.5rem;
   background: var(--colorFondoTarjeta);
-  border: 1px solid var(--colorBorde); 
-  border-radius: 12px;
+  border: 1px solid var(--colorBorde); border-radius: 12px;
   scroll-margin-top: 4rem;
 }
 .tituloSeccion { margin-top: 0; color: var(--colorAcento); }
@@ -132,3 +126,12 @@ code { font-family: Consolas, "Courier New", monospace; background: var(--colorA
 
 /* ============ PIE DE PÁGINA ============ */
 .piePagina { text-align: center; padding: 1.5rem; color: var(--colorTextoSecundario); }
+
+/* ============ SOLAPAS ============ */
+.botonSolapa {
+  white-space: nowrap; padding: .4rem .9rem; border: 1px solid var(--colorBorde); border-radius: 999px;
+  font-size: .85rem; cursor: pointer; background: var(--colorAcentoSuave); color: var(--colorAcento);
+}
+.botonSolapa:hover { outline: 2px solid var(--colorAcento); }
+.botonSolapa.solapaActiva { background: var(--colorAcento); color: var(--colorFondoTarjeta); font-weight: 700; }
+.ocultoPorSolapa { display: none; }

@@ -95,6 +95,42 @@ const listaPreguntasQuiz = [
     opcionesRespuesta: ["Scanner: sintáctico; Parser: léxico", "Scanner: carácter inválido; Parser: token inesperado como 42+", "Ambos detectan los mismos", "Ninguno detecta errores"],
     indiceRespuestaCorrecta: 1,
     explicacion: "Léxico = caracteres/tokens inválidos; sintáctico = secuencia de tokens incorrecta."
+  },
+  {
+    textoPregunta: "En C, ¿qué relación hay entre palabra clave y palabra reservada?",
+    opcionesRespuesta: ["Son lo mismo que identificador", "Todas las palabras clave de C son reservadas", "Las reservadas se pueden redefinir", "printf es palabra reservada"],
+    indiceRespuestaCorrecta: 1,
+    explicacion: "No se pueden usar como identificadores; printf es solo un identificador de la biblioteca."
+  },
+  {
+    textoPregunta: "¿Cómo se tokeniza a+++b según el munch máximo?",
+    opcionesRespuesta: ["a + ++ b", "a ++ + b", "a + + + b", "a+ ++b"],
+    indiceRespuestaCorrecta: 1,
+    explicacion: "El scanner toma siempre el token más largo posible: ++ antes que +."
+  },
+  {
+    textoPregunta: "¿Cuál de estas expresiones tiene comportamiento indefinido?",
+    opcionesRespuesta: ["f() + g()", "sizeof(int)", "i = i++ + 1", "unsigned u = 0; u--;"],
+    indiceRespuestaCorrecta: 2,
+    explicacion: "Modifica i dos veces sin secuenciar. f()+g() es no especificado; sizeof(int) es definido por la implementación; unsigned da la vuelta."
+  },
+  {
+    textoPregunta: "¿Qué diferencia hay entre comportamiento no especificado e indefinido?",
+    opcionesRespuesta: ["Ninguna", "No especificado: opciones válidas del estándar; indefinido: sin requisitos", "Indefinido está documentado por el compilador", "No especificado siempre falla"],
+    indiceRespuestaCorrecta: 1,
+    explicacion: "El no especificado sigue siendo un programa correcto; el UB no lo es."
+  },
+  {
+    textoPregunta: "¿Por qué a * b; es ambigua en C?",
+    opcionesRespuesta: ["Por la precedencia", "Puede ser multiplicación o declaración de puntero si a es un typedef", "Porque falta un operando", "Por el orden de evaluación"],
+    indiceRespuestaCorrecta: 1,
+    explicacion: "Hace falta saber si a es un nombre de tipo: depende de la tabla de símbolos."
+  },
+  {
+    textoPregunta: "¿Qué es L(G) de una gramática G?",
+    opcionesRespuesta: ["El conjunto de producciones", "Las cadenas de terminales derivables desde S", "Los no terminales", "Las formas sentenciales con no terminales"],
+    indiceRespuestaCorrecta: 1,
+    explicacion: "L(G) = { w ∈ T* | S ⇒* w }."
   }
 ];
 
@@ -184,3 +220,32 @@ document.getElementById("botonContraerRespuestas").addEventListener("click", fun
 document.getElementById("botonReiniciarQuiz").addEventListener("click", funcionRenderizarQuiz);
 
 funcionRenderizarQuiz();
+
+/* ============ SOLAPAS ============ */
+const mapaSolapas = {
+  solapaObligatorios: ["temaPalabrasClave", "temaIndefinido", "temaGramaticasFormales", "temaAmbiguedadesC"],
+  solapaRegexTp2: ["temaRegex", "temaTp2"],
+  solapaLenguajeC: ["temaDeclaraciones", "temaPrecedencia"],
+  solapaGramaticas: ["temaGramaticas", "temaParser", "temaEjerciciosExtra"],
+  solapaTp3: ["temaTp3"],
+  solapaPractica: ["temaPracticaParcial"],
+  solapaQuiz: ["temaQuiz", "temaConsejos"]
+};
+
+function funcionMostrarSolapa(nombreSolapa) {
+  document.querySelectorAll(".seccionTema").forEach(function (seccion) {
+    seccion.classList.add("ocultoPorSolapa");
+  });
+  mapaSolapas[nombreSolapa].forEach(function (idSeccion) {
+    document.getElementById(idSeccion).classList.remove("ocultoPorSolapa");
+  });
+  document.querySelectorAll(".botonSolapa").forEach(function (boton) {
+    boton.classList.toggle("solapaActiva", boton.dataset.solapa === nombreSolapa);
+  });
+  window.scrollTo(0, 0);
+}
+
+document.querySelectorAll(".botonSolapa").forEach(function (boton) {
+  boton.addEventListener("click", function () { funcionMostrarSolapa(boton.dataset.solapa); });
+});
+funcionMostrarSolapa("solapaObligatorios");

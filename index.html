@@ -19,18 +19,14 @@
 </header>
 
 <!-- ============ NAVEGACIÓN ============ -->
-<nav class="menuNavegacionTemas">
-  <a class="enlaceNavegacionTema" href="#temaRegex">1. Regex</a>
-  <a class="enlaceNavegacionTema" href="#temaTp2">2. TP2 Sumadores</a>
-  <a class="enlaceNavegacionTema" href="#temaDeclaraciones">3. Declaraciones C</a>
-  <a class="enlaceNavegacionTema" href="#temaPrecedencia">4. Precedencia</a>
-  <a class="enlaceNavegacionTema" href="#temaGramaticas">5. Gramáticas y autómatas</a>
-  <a class="enlaceNavegacionTema" href="#temaParser">6. Parser y BNF</a>
-  <a class="enlaceNavegacionTema" href="#temaTp3">7. TP3 Calculadora</a>
-  <a class="enlaceNavegacionTema" href="#temaPracticaParcial">8. Parcial resuelto</a>
-  <a class="enlaceNavegacionTema" href="#temaEjerciciosExtra">9. Ejercicios extra</a>
-  <a class="enlaceNavegacionTema" href="#temaQuiz">10. Quiz</a>
-  <a class="enlaceNavegacionTema" href="#temaConsejos">11. Consejos</a>
+<nav class="menuNavegacionTemas" id="menuSolapas">
+  <button class="botonSolapa" data-solapa="solapaObligatorios">⭐ Temas que toman sí o sí</button>
+  <button class="botonSolapa" data-solapa="solapaRegexTp2">Regex y TP2</button>
+  <button class="botonSolapa" data-solapa="solapaLenguajeC">Lenguaje C</button>
+  <button class="botonSolapa" data-solapa="solapaGramaticas">Gramáticas y parser</button>
+  <button class="botonSolapa" data-solapa="solapaTp3">TP3 Calculadora</button>
+  <button class="botonSolapa" data-solapa="solapaPractica">Práctica de parcial</button>
+  <button class="botonSolapa" data-solapa="solapaQuiz">Quiz y consejos</button>
 </nav>
 
 <main class="contenidoPrincipal">
@@ -39,6 +35,145 @@
   <button class="botonHerramienta" id="botonExpandirRespuestas">Mostrar todas las respuestas</button>
   <button class="botonHerramienta" id="botonContraerRespuestas">Ocultar todas las respuestas</button>
 </div>
+
+<!-- ============ OBLIGATORIO A: PALABRAS CLAVE Y RESERVADAS ============ -->
+<section class="seccionTema" id="temaPalabrasClave">
+  <h2 class="tituloSeccion">⭐ Palabras clave y palabras reservadas</h2>
+  <ul class="listaConceptos">
+    <li><strong>Palabra clave (keyword)</strong>: secuencia de letras con significado especial para el lenguaje (<code>if</code>, <code>while</code>, <code>int</code>).</li>
+    <li><strong>Palabra reservada</strong>: palabra clave que <strong>no se puede usar como identificador</strong>.</li>
+    <li>En <strong>C todas las palabras clave son reservadas</strong>. En otros lenguajes (Fortran, PL/I) hay keywords que no son reservadas: <code>IF IF = THEN</code> era válido en PL/I.</li>
+    <li>Las palabras clave sintácticamente <em>parecen</em> identificadores: cumplen la misma ER <code>[A-Za-z_][A-Za-z0-9_]*</code>.</li>
+  </ul>
+  <pre class="bloqueCodigo"><code>Palabras clave de C (K&amp;R A2.4, ANSI C):
+auto break case char const continue default do double else enum
+extern float for goto if int long register return short signed
+sizeof static struct switch typedef union unsigned void volatile while
+
+Agregadas en estándares posteriores: inline, restrict, _Bool (C99);
+bool, true, false, nullptr, constexpr, typeof (C23) → verificá cuáles ve tu cátedra.</code></pre>
+  <div class="cajaEjemplo">
+    <h4 class="tituloCajaEjemplo">Cómo lo resuelve el scanner</h4>
+    <ul class="listaConceptos">
+      <li>Reconoce el lexema con la ER de identificador (regla del <em>match más largo</em>: <code>integer</code> es un identificador, no <code>int</code> + <code>eger</code>).</li>
+      <li>Luego busca el lexema en una <strong>tabla de palabras reservadas</strong>; si está, devuelve su token (<code>INT</code>, <code>IF</code>…); si no, <code>IDENTIFICADOR</code>.</li>
+      <li>En flex: si hay empate de longitud, gana la regla escrita primero, por eso las keywords van antes que la regla de identificador.</li>
+    </ul>
+  </div>
+  <p class="notaImportante">Ojo: <code>printf</code> o <code>NULL</code> <strong>no</strong> son palabras clave: son identificadores de la biblioteca estándar. Tampoco podés definir identificadores que empiecen con <code>_</code> + mayúscula o con <code>__</code>: están reservados para la implementación.</p>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio: ¿cuáles son identificadores válidos?  <code>for</code>, <code>For</code>, <code>_for</code>, <code>2for</code>, <code>sizeof_x</code></summary>
+    <p><code>For</code>, <code>_for</code> y <code>sizeof_x</code> son identificadores válidos (C distingue mayúsculas y el match más largo hace que <code>sizeof_x</code> no sea <code>sizeof</code>). <code>for</code> es palabra reservada. <code>2for</code> empieza con dígito: es un error léxico (se lee <code>2</code> y luego <code>for</code>).</p>
+  </details>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
+
+<!-- ============ OBLIGATORIO B: COMPORTAMIENTO INDEFINIDO ============ -->
+<section class="seccionTema" id="temaIndefinido">
+  <h2 class="tituloSeccion">⭐ Comportamiento indefinido (y sus parientes)</h2>
+  <table class="tablaReferencia">
+    <thead><tr><th>Categoría</th><th>Qué dice el estándar</th><th>Ejemplo</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Definido por la implementación</strong></td><td>Varias opciones válidas; el compilador <em>debe documentar</em> cuál elige.</td><td><code>sizeof(int)</code>, si <code>char</code> tiene signo, <code>&gt;&gt;</code> de negativo.</td></tr>
+      <tr><td><strong>No especificado</strong></td><td>Varias opciones válidas; <em>no hace falta documentar</em>. El programa sigue siendo correcto.</td><td>Orden de evaluación de operandos: <code>f()+g()</code>; orden de los argumentos de una llamada.</td></tr>
+      <tr><td><strong>Indefinido (UB)</strong></td><td>El estándar no impone <strong>ningún</strong> requisito: puede dar cualquier resultado, colgarse o "andar bien".</td><td>Ver lista abajo.</td></tr>
+    </tbody>
+  </table>
+  <h3 class="subtituloSeccion">Casos típicos de UB</h3>
+  <pre class="bloqueCodigo"><code>int x = INT_MAX; x + 1;        /* overflow de entero CON signo */
+1 / 0;                          /* división por cero */
+int *p = NULL; *p = 5;          /* desreferenciar puntero nulo */
+int a[3]; a[3] = 1;             /* acceso fuera de límites */
+int u; printf("%d", u);         /* leer variable no inicializada */
+i = i++ + 1;  a[i] = i++;       /* modificar un objeto dos veces sin secuenciar */
+1 &lt;&lt; 40;                       /* desplazar ≥ ancho del tipo (int de 32 bits) */</code></pre>
+  <div class="cajaEjemplo">
+    <h4 class="tituloCajaEjemplo">Conexión con tus trabajos</h4>
+    <ul class="listaConceptos">
+      <li><strong>TP2, overflow:</strong> la suma de <code>int</code> que desborda es UB; en cambio los <code>unsigned</code> dan la vuelta (módulo 2ⁿ), que está definido. Por eso hay que detectar el desborde <em>antes</em> de sumar.</li>
+      <li><strong>Orden de evaluación:</strong> <code>f()+g()+h()</code> es comportamiento <em>no especificado</em> (no UB). <code>i = i++ + 1</code> sí es UB.</li>
+      <li>K&amp;R 2.12: <code>printf("%d %d\n", ++n, power(2, n));</code> depende del orden de evaluación de los argumentos.</li>
+    </ul>
+  </div>
+  <p class="notaImportante">Frase para el parcial: "Un programa con comportamiento indefinido <strong>no es un programa C correcto</strong>; el compilador puede asumir que no ocurre y optimizar en consecuencia."</p>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio: clasificá cada caso (indefinido / no especificado / definido por implementación)</summary>
+    <ul class="listaConceptos">
+      <li><code>int a = f() + g();</code> → <strong>no especificado</strong> (orden de f y g).</li>
+      <li><code>int n = 5; n = n++ + ++n;</code> → <strong>indefinido</strong> (modifica n dos veces sin secuenciar).</li>
+      <li><code>sizeof(long)</code> → <strong>definido por la implementación</strong>.</li>
+      <li><code>unsigned u = 0; u--;</code> → <strong>definido</strong> (módulo 2ⁿ).</li>
+      <li><code>a[10]</code> en <code>int a[10]</code> → <strong>indefinido</strong> (fuera de límites).</li>
+    </ul>
+  </details>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
+
+<!-- ============ OBLIGATORIO C: GRAMÁTICAS FORMALES ============ -->
+<section class="seccionTema" id="temaGramaticasFormales">
+  <h2 class="tituloSeccion">⭐ Gramáticas formales</h2>
+  <p><strong>G = (N, T, P, S)</strong>: N = no terminales, T = terminales (N ∩ T = ∅), P = producciones, S ∈ N = axioma.</p>
+  <ul class="listaConceptos">
+    <li><strong>Derivación directa</strong> <code>α ⇒ β</code>: se aplica una producción una vez. <strong>Derivación</strong> <code>α ⇒* β</code>: cero o más pasos.</li>
+    <li><strong>Forma sentencial</strong>: cualquier cadena derivable desde S (puede tener no terminales). <strong>Sentencia</strong>: forma sentencial solo con terminales.</li>
+    <li><strong>Lenguaje generado</strong>: <code>L(G) = { w ∈ T* | S ⇒* w }</code>.</li>
+    <li>Derivación <strong>más a la izquierda</strong> / <strong>más a la derecha</strong>: se reemplaza siempre el no terminal de ese lado.</li>
+    <li><strong>Árbol de derivación</strong>: raíz S, hojas terminales leídas de izquierda a derecha = la sentencia.</li>
+    <li>G es <strong>ambigua</strong> si existe una sentencia con 2 o más árboles de derivación (o 2 derivaciones más a la izquierda distintas).</li>
+    <li>Dos gramáticas son <strong>equivalentes</strong> si generan el mismo lenguaje. Una ambigua puede tener una equivalente no ambigua; hay lenguajes inherentemente ambiguos.</li>
+  </ul>
+  <div class="cajaEjemplo">
+    <h4 class="tituloCajaEjemplo">Ejemplo: G = ({S}, {a, b}, {S → aSb | ab}, S)</h4>
+    <p>Genera L = { aⁿbⁿ | n ≥ 1 }. Derivación de <code>aaabbb</code>: <code>S ⇒ aSb ⇒ aaSbb ⇒ aaabbb</code>. Es libre de contexto (tipo 2), no regular.</p>
+  </div>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio 1. Gramática regular para (a|b)*ab</summary>
+    <pre class="bloqueCodigo"><code>G = ({S, B}, {a, b}, P, S)
+P: S → aS | bS | aB
+   B → b</code></pre>
+    <p>Derivación de <code>bab</code>: S ⇒ bS ⇒ baB ⇒ bab. Todas las producciones son de la forma A → aB | a: tipo 3.</p>
+  </details>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio 2. Demostrá que E → E+E | E*E | id es ambigua</summary>
+    <p>Sentencia <code>id + id * id</code>, dos árboles:</p>
+    <pre class="bloqueCodigo"><code>Árbol 1: (id + id) * id          Árbol 2: id + (id * id)
+      *                                +
+     / \                              / \
+    +   id                          id   *
+   / \                                  / \
+ id   id                              id   id</code></pre>
+    <p>Solución: separar en niveles (E → E+T | T ; T → T*F | F ; F → id), que fija precedencia y asociatividad.</p>
+  </details>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio 3. ¿Qué tipo de Chomsky es S → aSb | ε ? ¿Y aA → bAa?</summary>
+    <p><code>S → aSb | ε</code>: tipo 2 (lado izquierdo = un solo no terminal), no es tipo 3 porque el no terminal está en el medio. <code>aA → bAa</code>: lado izquierdo con contexto (más de un símbolo): tipo 1 si no acorta la cadena.</p>
+  </details>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
+
+<!-- ============ OBLIGATORIO D: AMBIGÜEDADES EN C ============ -->
+<section class="seccionTema" id="temaAmbiguedadesC">
+  <h2 class="tituloSeccion">⭐ Ambigüedades en el lenguaje C</h2>
+  <p>Distinguí: ambigüedad <strong>léxica</strong> (¿cómo se parten los caracteres en tokens?), <strong>sintáctica</strong> (¿qué árbol?) y <strong>semántica</strong> (¿qué significa?).</p>
+  <table class="tablaReferencia">
+    <thead><tr><th>Caso</th><th>Ambigüedad</th><th>Cómo se resuelve</th></tr></thead>
+    <tbody>
+      <tr><td><code>if (a) if (b) x; else y;</code></td><td>Sintáctica: dangling else</td><td>Regla: el <code>else</code> va con el <code>if</code> más cercano.</td></tr>
+      <tr><td><code>a+++b</code></td><td>Léxica: ¿<code>a++ + b</code> o <code>a + ++b</code>?</td><td><strong>Munch máximo</strong>: el token más largo posible → <code>a++ + b</code>.</td></tr>
+      <tr><td><code>x = y/*p;</code></td><td>Léxica: ¿división por *p o inicio de comentario?</td><td>Munch máximo: <code>/*</code> abre un comentario.</td></tr>
+      <tr><td><code>a * b;</code></td><td>Sintáctica: ¿multiplicación o declaración de <code>b</code> como puntero a <code>a</code>?</td><td>Depende de si <code>a</code> es un nombre de tipo (<code>typedef</code>): el parser necesita información de la tabla de símbolos.</td></tr>
+      <tr><td><code>(a)(b)</code></td><td>Sintáctica: ¿cast o llamada a función?</td><td>Igual: depende de si <code>a</code> es un typedef.</td></tr>
+      <tr><td><code>int *p, q;</code></td><td>Semántica/lectura: ¿ambos punteros?</td><td>El <code>*</code> pertenece al declarador: solo <code>p</code> es puntero.</td></tr>
+      <tr><td><code>f() + g()</code></td><td>Semántica: orden de evaluación</td><td>No especificado: el programador no debe depender de él.</td></tr>
+    </tbody>
+  </table>
+  <p class="notaImportante">Consecuencia: la gramática de C <strong>no es libre de contexto pura</strong> si se quiere distinguir tipos de expresiones: hace falta consultar la tabla de símbolos (el "lexer hack").</p>
+  <details class="desplegableRespuesta">
+    <summary class="resumenDesplegable">Ejercicio: ¿cómo tokeniza el scanner <code>x=y---z</code> ?</summary>
+    <p>Con munch máximo: <code>x</code> <code>=</code> <code>y</code> <code>--</code> <code>-</code> <code>z</code>, es decir <code>x = (y--) - z</code>.</p>
+  </details>
+  <label class="etiquetaChecklist"><input type="checkbox" class="casillaTemaRepasado"> Tema repasado</label>
+</section>
 
 <!-- ============ 1. EXPRESIONES REGULARES ============ -->
 <section class="seccionTema" id="temaRegex">
